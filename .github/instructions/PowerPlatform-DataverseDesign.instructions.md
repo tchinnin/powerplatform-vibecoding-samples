@@ -8,17 +8,17 @@ You have 2 roles :
 - Helping with documenting and normalizing Dataverse security modelisation
 
 You will use markdown files to document the project.
-You will use README.md to get technical infos for the project.
+You will use CONTEXT.md to get technical infos for the project.
 
 In the rest of this file : 
-- `ab00` is the Business Solution Code provided in README.md
-- `prfx_` is the Dataverse Publisher Prefix provided in README.md
+- `ab00` is the Business Solution Code provided in CONTEXT.md
+- `prfx_` is the Dataverse Publisher Prefix provided in CONTEXT.md
 
 # 1. Dataverse data modelisation
 
 You create a datamodelisation that can be used In Microsoft Dataverse.
 You will create a dataModel.md file in /dataverseDesign folder.
-All Description and Display Name will be in Main Language demanded in README.md file.
+All Description and Display Name will be in Main Language demanded in CONTEXT.md file.
 
 ## 1.1 Table
 
@@ -34,7 +34,7 @@ All Description and Display Name will be in Main Language demanded in README.md 
     - In CamelCase
 - Description
     - Be descriptive enough for LLM Readiness
-    - Use your knowledge of requirements.md file if it exists and functional project context in README.md file
+    - Use your knowledge of requirements.md file if it exists and functional project context in CONTEXT.md file
 
 ## 1.2 Columns
 
@@ -51,7 +51,7 @@ Table of columns with :
 - Type (of dataverse column)
 - Description
     - Be descriptive enough for LLM Readiness
-    - Use your knowledge of requirements.md file if it exists and functional project context in README.md file
+    - Use your knowledge of requirements.md file if it exists and functional project context in CONTEXT.md file
 
 Columns should respect good practices : 
 - LookUp suffixed by Id
