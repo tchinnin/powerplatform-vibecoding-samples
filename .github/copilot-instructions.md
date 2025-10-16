@@ -18,15 +18,14 @@ This folder wil store :
     - Power Apps Code Apps
     - Power Pages SPA Websites
 
-
 ## Setup
 
 First step when initializing a new project **is to fill in the CONTEXT.md file.**
+
 Use this instructions to help you fill in the CONTEXT.md file.
 The file structure is already provided and will not be changed.
 All data will be provided by the user. The agent will ask the user for missing data.
 
------
 
 # 1. Global Agent Behavior
 
@@ -91,9 +90,9 @@ All data will be provided by the user. The agent will ask the user for missing d
   reviewed.
 
 - Summarize your reasoning and decision-making if a change affects 
-  multiple components.
+  multiple components. Do not store this summary in the codebase.
 
------
+---
 
 # 2. Copilot Instructions
 Depending on the task requested, you will use one of the following instruction files to get instructions on how to proceed :
@@ -110,7 +109,7 @@ Depending on the task requested, you will use one of the following instruction f
 | PowerPlatform-PowerPagesSPA.instructions.md | For Power Pages SPA Websites (uses React-SPA.instructions.md for development practices) |
 | React-SPA.instructions.md | For React-based SPA development with Fluent UI 9 (shared by Code Apps and Power Pages SPA) |
 
-# CONTEXT.md
+## CONTEXT.md
 
 You will help fill in the CONTEXT.md file. If the file is not present. Do not create it. Ask the user to create it.
 This file is responsible for explaining the context of the project, with technical and functional aspects.
@@ -119,5 +118,50 @@ It will be used copilot agent interactions.
 File structure is already provided and agent will not change it.
 All data will be provided by the user. The agent will ask the user for missing data.
 
-# Diagrams
+## Diagrams
 For all diagrams, you will use mermaid syntax.
+
+
+## Folder Structure
+
+The project should be organized using the following root folder structure:
+
+```
+/
+├── CONTEXT.md                    # Project context and technical documentation
+│
+├── Requirements/                 # Business requirements and functional diagrams
+│   └── README.md                # → [Requirements.instructions.md](./instructions/Requirements.instructions.md)
+│
+├── DataverseDesign/             # Dataverse data model and security design
+│   ├── dataModel.md             # → [PowerPlatform-DataverseDesign.instructions.md](./instructions/PowerPlatform-DataverseDesign.instructions.md)
+│   └── securityModel.md
+│
+├── Plugins/                     # Dataverse Plugins (C#)
+│   ├── Assembly1/               # → [PowerPlatform-DataversePlugins.instructions.md](./instructions/PowerPlatform-DataversePlugins.instructions.md)
+│   └── Assembly2/
+│
+├── MDAScripts/                  # Model-Driven Apps client-side JavaScript
+│   ├── FormScript1.js           # → [PowerPlatform-MDAClientSideScripts.instructions.md](./instructions/PowerPlatform-MDAClientSideScripts.instructions.md)
+│   ├── RibbonScript1.js
+│   └── WebResource1.js
+│
+├── PCFs/                        # Power Apps Component Framework controls
+│   ├── Control1/                # → [PowerPlatform-PCF.instructions.md](./instructions/PowerPlatform-PCF.instructions.md)
+│   └── Control2/
+│
+├── CodeApps/                    # Power Apps Code Apps (React)
+│   ├── CodeApp1/                # → [PowerPlatform-CodeApps.instructions.md](./instructions/PowerPlatform-CodeApps.instructions.md)
+│   └── CodeApp2/
+│
+└── PowerPagesSPA/               # Power Pages SPA websites
+    ├── WebSite1/                # → [PowerPlatform-PowerPagesSPA.instructions.md](./instructions/PowerPlatform-PowerPagesSPA.instructions.md)
+    └── WebSite2/
+```
+
+### Guidelines
+
+- Each folder should contain only artifacts related to its specific purpose
+- Follow the instruction file associated with each folder type when creating or modifying content
+- Maintain a consistent structure within each folder type across different projects
+- The `CONTEXT.md` file should remain at the root level of the project
