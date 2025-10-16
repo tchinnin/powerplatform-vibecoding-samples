@@ -1,3 +1,5 @@
+# Copilot Instructions for Power Platform Projects
+
 Business Application Project using Microsoft Power Platform.
 This project will use Microsoft Dataverse as a data platform.
 This folder wil store :
@@ -17,7 +19,7 @@ This folder wil store :
     - Power Pages SPA Websites
 
 
-# Setup
+## Setup
 
 First step when initializing a new project **is to fill in the CONTEXT.md file.**
 Use this instructions to help you fill in the CONTEXT.md file.

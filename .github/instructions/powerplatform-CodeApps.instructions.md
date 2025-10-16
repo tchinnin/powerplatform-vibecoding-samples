@@ -1,3 +1,7 @@
+---
+applyTo: "CodeApps/**"
+---
+
 # Power Apps Code Apps Development Guide
 
 This guide covers Power Apps Code Apps-specific setup and integration. For general React development, Fluent UI 9 patterns, routing, and UI best practices, refer to **React-SPA.instructions.md**.

@@ -1,3 +1,7 @@
+---
+applyTo: "CodeApps/**,PowerPagesSPA/**,PCFs/**"
+---
+
 # Fluent UI 9 + React SPA Development Guidelines
 
 This document outlines the standard practices and conventions for React-based development projects using Fluent UI 9 and modern React patterns.

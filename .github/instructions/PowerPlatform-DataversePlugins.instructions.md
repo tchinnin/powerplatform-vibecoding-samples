@@ -1,3 +1,7 @@
+---
+applyTo: "Plugins/**"
+---
+
 # GitHub Copilot Instructions
 
 These are special instructions for GitHub Copilot (Agent Mode) to follow when helping me in this repository.

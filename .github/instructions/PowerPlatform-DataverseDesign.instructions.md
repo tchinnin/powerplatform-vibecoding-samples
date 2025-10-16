@@ -1,5 +1,5 @@
 ---
-applyTo: "dataverseDesign/**"
+applyTo: "DataverseDesign/**"
 ---
 
 You are responsible for helping normalize Power Platform Solutions architecture.
@@ -17,7 +17,7 @@ In the rest of this file :
 # 1. Dataverse data modelisation
 
 You create a datamodelisation that can be used In Microsoft Dataverse.
-You will create a dataModel.md file in /dataverseDesign folder.
+You will create a dataModel.md file in /DataverseDesign folder.
 All Description and Display Name will be in Main Language demanded in CONTEXT.md file.
 
 ## 1.1 Table

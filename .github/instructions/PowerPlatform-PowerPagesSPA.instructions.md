@@ -1,9 +1,13 @@
+---
+applyTo: "PowerPagesSPA/**"
+---
+
 # Power Pages SPA Development Guide
 
 This guide covers Power Pages SPA-specific setup and integration. For general React development, Fluent UI 9 patterns, routing, and UI best practices, refer to **React-SPA.instructions.md**.
 
 **Power Pages SPA Workflow:**
-1. Create React SPA project (standard Vite + React + TypeScript)
+1. Create React SPA project (standard Vite + React + TypeScript) inside `/PowerPagesSPA` folder
 2. Configure Power Pages deployment settings
 3. Upload and deploy to Power Pages
 4. Configure authentication and authorization
