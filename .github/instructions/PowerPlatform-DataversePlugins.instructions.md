@@ -65,6 +65,8 @@ Example:
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
     <RootNamespace>Company.Product.Feature</RootNamespace>
+    <!-- Plugin Assembly ID in Dataverse - used for pac plugin push --pluginId -->
+    <PluginId></PluginId>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -106,6 +108,7 @@ This command generates:
 **After initialization:**
 1. Update the `.csproj` file with the correct `RootNamespace`
 2. Update NuGet package metadata (Company, Description)
+3. Add the `<PluginId>` property (leave empty initially, will be filled after first deployment)
 
 ### Step 2: Generate Early-Bound Classes
 
@@ -289,7 +292,31 @@ namespace {Namespace}.Plugins
 - Use `ILocalPluginContext` for services
 - Always include cleanup logic in catch block
 
-### Step 5: Build Project
+### Step 5: Increment Package Version
+
+**CRITICAL:** Before building for deployment, **ALWAYS increment the version** in the `.csproj` file.
+
+1. Open the `.csproj` file
+2. Update the version numbers:
+   ```xml
+   <AssemblyVersion>1.0.1.0</AssemblyVersion>
+   <FileVersion>1.0.1.0</FileVersion>
+   ```
+3. The `<Version>` property will automatically use `$(FileVersion)`
+
+**Why increment the version?**
+- Ensures the NuGet package is regenerated
+- Tracks plugin changes in the environment
+- Required for proper deployment and updates
+- Prevents deployment conflicts
+
+**Version Naming Convention:**
+- **Major.Minor.Patch.Build** (e.g., 1.0.1.0)
+- Increment **Patch** for bug fixes
+- Increment **Minor** for new features
+- Increment **Major** for breaking changes
+
+### Step 6: Build Project
 
 #### Debug Build
 ```sh
@@ -297,30 +324,80 @@ dotnet build
 ```
 
 #### Release Build (for deployment)
+
+**CRITICAL:** After incrementing the version, use this workflow:
 ```sh
-dotnet build -c Release
+dotnet clean && dotnet build -c Release
 ```
+
+**Why use `dotnet clean`?**
+- Removes all previously generated files (`bin/`, `obj/`, `.nupkg`)
+- Forces complete recompilation
+- Ensures the NuGet package is regenerated with latest code
+- Guarantees version update is applied
 
 **Output:**
 - `bin/Release/net462/{ProjectName}.dll` - Plugin assembly
 - `bin/Release/{ProjectName}.{Version}.nupkg` - **NuGet package for deployment**
 
-### Step 6: Deploy Plugin Package
+### Step 7: Deploy Plugin Package
 
-**Use NuGet Package (Recommended):**
+**CRITICAL:** Use `--pluginId` and `--pluginFile` parameters (NOT `--solution-name`):
+
+#### First Deployment (no PluginId yet)
+
+**CRITICAL:** The `--pluginId` parameter is mandatory for `pac plugin push`. For the first deployment, the plugin must be registered manually.
+
+1. **Ask the user to deploy the plugin manually** (using Plugin Registration Tool or Power Platform admin center)
+2. **Ask the user for the Plugin ID (GUID)** once the plugin is registered
+3. **Update the `.csproj` file automatically** by adding the GUID to the `<PluginId>` property
+4. Confirm to the user that the `.csproj` has been updated and future deployments will use `pac plugin push` automatically
+
+#### Subsequent Deployments (with PluginId configured)
+
+**Read the PluginId from .csproj:**
+
+**macOS / Linux (bash/zsh):**
 ```sh
+# Extract PluginId from .csproj
+PLUGIN_ID=$(grep -o '<PluginId>[^<]*' {ProjectName}.csproj | sed 's/<PluginId>//')
+
+# Deploy using the extracted ID
 pac plugin push \
-  --package ./bin/Release/{ProjectName}.{Version}.nupkg \
-  --solution-name {SolutionName}
+  --pluginId "$PLUGIN_ID" \
+  --pluginFile ./bin/Release/net462/{ProjectName}.dll
 ```
 
-**Benefits of NuGet Package:**
-- Supports dependent assemblies
-- No signing issues
-- Microsoft recommended approach
-- Easier version management
+**Windows (PowerShell):**
+```powershell
+# Extract PluginId from .csproj
+$PLUGIN_ID = Select-String -Path "{ProjectName}.csproj" -Pattern '<PluginId>([^<]+)</PluginId>' | ForEach-Object { $_.Matches.Groups[1].Value }
 
-**Note:** Ensure solution exists in target environment before deployment.
+# Deploy using the extracted ID
+pac plugin push `
+  --pluginId "$PLUGIN_ID" `
+  --pluginFile ./bin/Release/net462/{ProjectName}.dll
+```
+
+**Alternative: Cross-platform with dotnet CLI:**
+```sh
+# Works on all platforms
+PLUGIN_ID=$(dotnet msbuild {ProjectName}.csproj -getProperty:PluginId -nologo)
+pac plugin push --pluginId "$PLUGIN_ID" -pf ./bin/Release/net462/{ProjectName}.dll
+```
+
+**Key Parameters:**
+- `--pluginId`: The GUID of the plugin assembly in Dataverse (stored in `.csproj`)
+- `--pluginFile` or `-pf`: Path to the compiled DLL file
+- **DO NOT use `--solution-name`** - This parameter is not needed for plugin updates
+
+**Benefits of this approach:**
+- Plugin ID stored in version control with the code
+- No need to ask user for Plugin ID on each deployment
+- Direct plugin assembly update
+- No solution dependency
+- Faster deployment
+- Works across all environments
 
 ---
 
@@ -381,8 +458,11 @@ Before deploying plugins:
 - [ ] Tracing is comprehensive
 - [ ] Helper functions are reusable
 - [ ] Assembly is signed with strong name key
-- [ ] NuGet package version is incremented
-- [ ] Solution exists in target environment
+- [ ] **Version incremented in .csproj file (CRITICAL)**
+- [ ] `dotnet clean && dotnet build -c Release` executed
+- [ ] `PluginId` configured in .csproj (after first deployment)
+- [ ] Deployment command reads `PluginId` from .csproj
+- [ ] Deployment uses `--pluginId` and `--pluginFile` (NOT `--solution-name`)
 
 ---
 
@@ -394,8 +474,13 @@ Before deploying plugins:
 - **Use ParentRootRoleId for security roles** - Not role name matching
 - **Suggest helper functions first** - Before writing plugin logic
 - **Guide with PAC CLI commands** - Not Plugin Registration Tool
-- **Deploy as NuGet packages** - Not individual DLLs
-- **Ask for missing information** - Environment URL, solution name, etc.
+- **ALWAYS remind to increment version** - Before build and deployment
+- **Check for `PluginId` in .csproj** - If present, use it; if not, guide first deployment
+- **After first deployment, ask user for Plugin ID** - Then update .csproj automatically with the value
+- **Update `<PluginId>` in .csproj automatically** - Don't ask user to do it manually
+- **Use `--pluginId` and `--pluginFile` for deployment** - Never use `--solution-name`
+- **Always run `dotnet clean` before release build** - To ensure package regeneration
+- **Ask for missing information** - Environment URL, etc. (but not Plugin ID if in .csproj)
 - **Follow the step-by-step workflow** - Don't skip steps
 - **Promote clean code** - Suggest refactoring when needed
 
@@ -418,4 +503,13 @@ Before deploying plugins:
 **Solution:** Add comprehensive tracing at every step
 
 **Issue:** Deployment fails - solution not found  
-**Solution:** Create solution first, then deploy plugin package
+**Solution:** Use `--pluginId` and `--pluginFile` instead of `--solution-name`
+
+**Issue:** Plugin not updating despite new deployment  
+**Solution:** Increment version in `.csproj` and run `dotnet clean` before build
+
+**Issue:** Cannot find Plugin ID  
+**Solution:** Check `.csproj` for `<PluginId>` property first. If empty, check Power Platform admin center > Plugin assemblies, or deploy first time without `--pluginId`
+
+**Issue:** PluginId is empty in .csproj  
+**Solution:** This is normal for first deployment. Deploy without `--pluginId`, then retrieve the ID from admin center and add it to .csproj
